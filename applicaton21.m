@@ -1,0 +1,44 @@
+clc
+clear
+rabbit = load("rabbit_data.txt");
+year = rabbit(:,1);
+month = rabbit(:,2);
+average = rabbit(:,3);
+% get the data
+date = (year + month ./12);
+
+
+% make the graph
+plot ( date, average);
+xlabel('date');
+ylabel('rabbit in number');
+title('rabbit population');
+% get the index of the number of when it is not going over 2005 year
+index=0;
+long = length(year);
+for i = 1:long
+    if year(i,1) <2005
+        index = index +1;
+    end
+end
+
+% make it file with the selected index 
+stand2015 = average (1:index,1);
+standard = std(stand2015);
+mean_2014 = mean(stand2015);
+% make it file with the selected index after 2016 
+
+stand_after2015 = average ( index+1:long,1);
+standardafter2016 = std(stand_after2015);
+mean_2015 = mean(stand_after2015);
+fprintf(" the standard diviation for before 2015 is %f, after 2015 is %f\n", standard , standardafter2016);
+fprintf(" the mean for before 2015 is %f, after 2015 is %f", mean_2014 , mean_2015);
+
+
+
+%comment
+% the standard diviation has been increase after 2016 because the
+% population has been increase that is equal to alot of decrase of the
+% population
+% the r value also have been chagne we could see that by looking at
+% standard deviation

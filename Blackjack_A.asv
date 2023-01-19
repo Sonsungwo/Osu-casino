@@ -1,0 +1,377 @@
+function [playerMoney] = Blackjack_A(playerMoney)
+    cardshape = simpleGameEngine('retro_pack.png', 16, 16, 5, [0, 128, 0]);
+    board = [345,1,1,1,1,1,1,1,1,1;1,1,1,1,1,1,1,1,1,1;259,1,1,1,1,1,1,1,1,1;1,1,1,1,1,1,1,1,1,1;1,1,1,1,1,1,1,1,1,1;1,1,1,1,1,1,1,1,1,1];
+    drawScene(cardshape, board);
+    %clc
+    pIsBroke = false;
+    disp("The rule of the blackjack is to get number less than 21. If you get over 21 you lose. Try to get higher number than dealer!!")
+    pause (2);
+    wantsToPlay = "y";
+    wantsToPlay = input("Do you want to play Blackjack? y or n \n", "s");
+    while(wantsToPlay ~="n" && wantsToPlay ~= "y")
+       wantsToPlay = input("This is not a valid input. Do you want to play blackjack? y or n", "s"); 
+    end
+    if(wantsToPlay== "n")
+        fprintf("Understandable, have a nice day.\n")
+        return
+    end
+    
+    % bet loop
+    while (wantsToPlay=="y" && pIsBroke == false)
+        board = [345,1,1,1,1,1,1,1,1,1;1,1,1,1,1,1,1,1,1,1;259,1,1,1,1,1,1,1,1,1;1,1,1,1,1,1,1,1,1,1;345,1017,982,1013,1016,984,958,948,948,1;259,1017,982,1013,1016,984,958,948,948,1];
+        drawScene(cardshape, board);
+        fprintf("You have %.0f coins \n", playerMoney);
+        playerBet = input("Place your bet: ");
+        while(playerBet <= 0 || playerBet > playerMoney)
+            if(playerBet <= 0)
+                playerBet = input("Bet must be greater than zero, place a valid bet: \n");
+            elseif(playerBet > playerMoney)
+                playerBet = input("You do not have enough money for that bet, place a valid bet: \n");
+            end
+        end
+        playerMoney = playerMoney - playerBet;
+        
+        % Cards are dealt
+        % Dealer cards dealt
+        fprintf("The dealers first card is: \n");
+        [dealerCards, hasAceD, DcardIMG] = getCardSimpleGameEngine(1);
+        Blackjack = false;
+        board(3,2) = DcardIMG;
+            if(dealerCards==30)
+                board(6,8) = 951;
+                board(6,9) = 948;
+            elseif(dealerCards > 21)
+                board(6,8) = 950;
+                board(6,9) = 948+(dealerCards-20);
+            elseif(dealerCards ==21)
+                board(6,8)=950;
+                board(6,9)=949;
+            elseif(dealerCards==20)
+                board(6,8)=950;
+                board(6,9)=948;
+            elseif(dealerCards>=10)
+                board(6,8)=949;
+                board(6,9)=948+(dealerCards-10);
+            else
+                board(6,9) = 948+dealerCards;
+            end
+        drawScene(cardshape, board);
+        pause(1);
+    
+    
+        %Your cards dealt
+        fprintf("Your cards are: \n");
+        [playerCards, hasAceP, PcardIMG] = getCardSimpleGameEngine(1);
+        board(1, 2) = PcardIMG;
+                %Score Display System
+            if(playerCards==30)
+                board(5,8) = 951;
+                board(5,9) = 948;
+            elseif(playerCards > 21)
+                board(5,8) = 950;
+                board(5,9) = 948+(playerCards-20);
+            elseif(playerCards ==21)
+                board(5,8)=950;
+                board(5,9)=949;
+            elseif(playerCards==20)
+                board(5,8)=950;
+                board(5,9)=948;
+            elseif(playerCards>=10)
+                board(5,8)=949;
+                board(5,9)=948+(playerCards-10);
+            else
+                board(5,9) = 948+playerCards;
+            end
+        drawScene(cardshape, board);
+        pause(1);
+        [playerCard2, hasAceP2, PcardIMG] = getCardSimpleGameEngine(1);
+        playerCards = playerCards + playerCard2;
+        board(1,3) = PcardIMG;
+            if(playerCards==30)
+                board(5,8) = 951;
+                board(5,9) = 948;
+            elseif(playerCards > 21)
+                board(5,8) = 950;
+                board(5,9) = 948+(playerCards-20);
+            elseif(playerCards ==21)
+                board(5,8)=950;
+                board(5,9)=949;
+            elseif(playerCards==20)
+                board(5,8)=950;
+                board(5,9)=948;
+            elseif(playerCards>=10)
+                board(5,8)=949;
+                board(5,9)=948+(playerCards-10);
+            else
+                board(5,9) = 948+playerCards;
+            end
+        drawScene(cardshape, board);
+        pause(1);
+        if(playerCards == 22)
+            playerCards = playerCards -10;
+        elseif(playerCards == 21)
+            fprintf("You have a natural Blackjack. If the dealer also has a natural Blackjack it is a push, otherwise you win. \n");
+            [cardAdded, hasAceD, DcardIMG] = getCardSimpleGameEngine(1);
+            dealerCards = dealerCards + cardAdded;
+            board(3,2) = DcardIMG;
+            drawScene(cardshape, board);
+            if(dealerCards == 21)
+                fprintf("The dealer also has a natural Blackjack, it is a push. \n");
+                playerMoney = playerMoney+playerBet;
+                Blackjack = true;
+            else
+                fprintf("The dealer did not have a natural Blackjack, you win. \n");
+                board(4,2)=1023;
+                board(4,3)=1015;
+                board(4,4)=1019;
+                board(4,6)=1021;
+                board(4,7)=988;
+                board(4,8)=1012;
+                drawScene(cardshape, board);
+                playerMoney = playerMoney+playerBet*2;
+                Blackjack = true;
+            end
+                
+        end 
+        fprintf("You are now at %.0f \n", playerCards);
+        
+        % Player choices action
+        playerChoice = "hit";
+        pCardIndex = 4;
+        while(playerChoice== "hit" && playerCards < 21)
+        
+            playerChoice = input("What do you want to do: hit, double down, or stand \n", "s");
+        
+            if playerChoice == "hit"
+                [cardAdded, isAceAdded, PcardIMG] = getCardSimpleGameEngine(1);
+                playerCards = playerCards + cardAdded;
+                if((isAceAdded == true || hasAceP == true || hasAceP2) && playerCards > 21)
+                    playerCards = playerCards - 10;
+                    if(isAceAdded == true)
+                        isAceAdded = false;
+                    elseif(hasAceP == true)
+                        hasAceP = false;
+                    elseif(hasAceP2 == true)
+                        hasAceP2 = false;
+                    end 
+                end
+                board(1, pCardIndex) = PcardIMG;
+                if(playerCards==30)
+                    board(5,8) = 951;
+                    board(5,9) = 948;
+                elseif(playerCards > 21)
+                    board(5,8) = 950;
+                    board(5,9) = 948+(playerCards-20);
+                elseif(playerCards ==21)
+                    board(5,8)=950;
+                    board(5,9)=949;
+                elseif(playerCards==20)
+                    board(5,8)=950;
+                    board(5,9)=948;
+                elseif(playerCards>=10)
+                    board(5,8)=949;
+                    board(5,9)=948+(playerCards-10);
+                else
+                    board(5,9) = 948+playerCards;
+                end
+                drawScene(cardshape, board);
+                pCardIndex = pCardIndex + 1;
+                fprintf("You are now at %.0f \n", playerCards);
+            elseif playerChoice == "double down"
+                if playerMoney < playerBet * 2
+                    fprintf("You do not have enough money to double down, choose something else: \n");
+                    playerChoice = "hit";
+                else
+                    [cardAdded, isAceAdded, PcardIMG] = getCardSimpleGameEngine(1);
+                    playerCards = playerCards + cardAdded;
+                    playerBet = playerBet * 2;
+                    if((isAceAdded == true || hasAceP == true || hasAceP2) && playerCards > 21)
+                        playerCards = playerCards - 10;
+                        if(isAceAdded == true)
+                            isAceAdded = false;
+                        elseif(hasAceP == true)
+                            hasAceP = false;
+                        elseif(hasAceP2==true)
+                            hasAceP2 = false;
+                        end
+                    end
+                    board(1, pCardIndex) = PcardIMG;
+                    if(playerCards==30)
+                        board(5,8) = 951;
+                        board(5,9) = 948;
+                    elseif(playerCards > 21)
+                        board(5,8) = 950;
+                        board(5,9) = 948+(playerCards-20);
+                    elseif(playerCards ==21)
+                        board(5,8)=950;
+                        board(5,9)=949;
+                   elseif(playerCards==20)
+                        board(5,8)=950;
+                        board(5,9)=948;
+                    elseif(playerCards>=10)
+                        board(5,8)=949;
+                        board(5,9)=948+(playerCards-10);
+                    else
+                        board(5,9) = 948+playerCards;
+                    end
+                    drawScene(cardshape, board);
+                    pCardIndex = pCardIndex + 1;
+                    fprintf("your bet is now %.0f \n", playerBet);
+                    fprintf("You are now at %.0f \n", playerCards);
+                end
+            elseif playerChoice == "stand"
+                fprintf("You are standing at %.0f \n", playerCards);
+            else
+                playerChoice = "hit";
+                fprintf("That is not a valid input, choose something else: \n")
+            end
+        
+            if(playerCards > 21)
+                fprintf("You went over 21, you lose \n");
+                board(4,2)=1023;
+                board(4,3)=1015;
+                board(4,4)=1019;
+                board(4,6)=991;
+                board(4,7)=1015;
+                board(4,8)=1017;
+                board(4,9)=984;
+                drawScene(cardshape, board);
+            end
+        
+        end
+        
+        % dealer reacts to player action
+        if(playerCards <= 21 && Blackjack == false)
+            fprintf("The dealers second card is revealed \n");
+            [cardAdded, isAceAdded, DcardIMG] = getCardSimpleGameEngine(1);
+            dealerCards = dealerCards + cardAdded;
+            if((isAceAdded == true || hasAceD == true) && dealerCards > 21)
+                dealerCards = dealerCards -10;
+                if(isAceAdded == true)
+                    isAceAdded = false;
+                elseif(hasAceP == true)
+                    hasAceD = false;
+                end
+            end
+            board(3,3) = DcardIMG;
+            if(dealerCards==30)
+                board(6,8) = 951;
+                board(6,9) = 948;
+            elseif(dealerCards > 21)
+                board(6,8) = 950;
+                board(6,9) = 948+(dealerCards-20);
+            elseif(dealerCards ==21)
+                board(6,8)=950;
+                board(6,9)=949;
+            elseif(dealerCards==20)
+                board(6,8)=950;
+                board(6,9)=948;
+            elseif(dealerCards>=10)
+                board(6,8)=949;
+                board(6,9)=948+(dealerCards-10);
+            else
+                board(6,9) = 948+dealerCards;
+            end
+            drawScene(cardshape, board);
+            fprintf("The dealer is at %.0f \n", dealerCards);
+            pause(1);
+                dCardIndex = 4;
+                while(dealerCards < playerCards)
+                    fprintf("The dealer hits \n");
+                    [cardAdded, isAceAdded, DcardIMG] = getCardSimpleGameEngine(1);
+                    dealerCards = dealerCards + cardAdded;
+                    if((isAceAdded == true || hasAceD == true) && dealerCards > 21)
+                        dealerCards = dealerCards -10;
+                        if(isAceAdded == true)
+                            isAceAdded = false;
+                        elseif(hasAceP == true)
+                            hasAceD = false;
+                        end
+                    end
+                    board(3,dCardIndex) = DcardIMG;
+                    dCardIndex = dCardIndex + 1;
+                    if(dealerCards==30)
+                        board(6,8) = 951;
+                        board(6,9) = 948;
+                    elseif(dealerCards > 21)
+                        board(6,8) = 950;
+                        board(6,9) = 948+(dealerCards-20);
+                    elseif(dealerCards ==21)
+                        board(6,8)=950;
+                        board(6,9)=949;
+                    elseif(dealerCards==20)
+                        board(6,8)=950;
+                        board(6,9)=948;
+                    elseif(dealerCards>=10)
+                        board(6,8)=949;
+                        board(6,9)=948+(dealerCards-10);
+                    else
+                        board(6,9) = 948+dealerCards;
+                    end
+                    drawScene(cardshape, board);
+                    fprintf("The dealer is at %.0f \n", dealerCards);
+                    pause(1);
+                end
+                if(dealerCards <= 21 && dealerCards > playerCards)
+                    fprintf("The dealer went higher than you, you lose \n");
+                    board(4,2)=1023;
+                    board(4,3)=1015;
+                    board(4,4)=1019;
+                    board(4,6)=991;
+                    board(4,7)=1015;
+                    board(4,8)=1017;
+                    board(4,9)=984;
+                    drawScene(cardshape, board);
+                elseif(dealerCards <= 21 && dealerCards < playerCards)
+                    fprintf("You are higher than the dealer, you win \n");
+                    board(4,2)=1023;
+                    board(4,3)=1015;
+                    board(4,4)=1019;
+                    board(4,6)=1021;
+                    board(4,7)=988;
+                    board(4,8)=1012;
+                    drawScene(cardshape, board);
+                    playerMoney = playerMoney + playerBet*2;
+                elseif(dealerCards == playerCards)
+                    fprintf("Its a tie, you get your money back \n");
+                    playerMoney = playerMoney+playerBet;
+                    board(4,2)=1023;
+                    board(4,3)=1015;
+                    board(4,4)=1019;
+                    board(4,6)=1018;
+                    board(4,7)=988;
+                    board(4,8)=984;
+                    drawScene(cardshape, board);
+                else
+                    fprintf("The dealer went bust, you win \n");
+                    board(4,2)=1023;
+                    board(4,3)=1015;
+                    board(4,4)=1019;
+                    board(4,6)=1021;
+                    board(4,7)=988;
+                    board(4,8)=1012;
+                    drawScene(cardshape, board);
+                    playerMoney = playerMoney + playerBet*2;
+                end
+        end
+         if(playerMoney == 0)
+            pIsBroke = true;
+            fprintf("You do not have enough money \n")
+            break
+        end
+        % money is displayed, player is asked if they want to play again
+        fprintf("You now have %.0f coins\n", playerMoney);
+        wantsToPlay = input("Do you want to play again? y or n \n", "s");
+        while(wantsToPlay ~="n" && wantsToPlay ~= "y")
+            wantsToPlay = input("This is not a valid input. Do you want to play blackjack? y or n", "s"); 
+        end
+        if(wantsToPlay=="n")
+            fprintf("Understandable, have a nice day.\n")
+            break
+        end
+        clc
+        
+    end
+
+
+

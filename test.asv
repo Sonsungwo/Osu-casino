@@ -1,0 +1,21 @@
+clc
+clear
+a=4;
+b=4;
+c=4;
+d=4;
+e=4;
+z=0;
+y=0;
+count=0;
+
+for i = 1:5
+same = [a,b,c,d,e ];
+compare =(same==i);
+countsum = sum(compare);
+    if count<countsum
+        count = countsum;
+    end
+
+end
+count

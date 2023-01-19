@@ -1,0 +1,51 @@
+function [cardw ,cardsh, totalCardVal, isAce] = getCard(cardAmount)
+
+    totalCardVal = 0;
+    cardVals = [11 2 3 4 5 6 7 8 9 10 10 10 10];
+    isAce = false;
+    for i = 1 : cardAmount
+    cardFaction = round((4-1) * rand(1)+1);
+    cardNumber = round((13-1)*rand(1)+1);
+    if cardNumber ==13
+        cardNumStr = "King";
+    elseif cardNumber == 12
+        cardNumStr = "Queen";
+    elseif cardNumber == 11
+        cardNumStr = "Jack";
+    elseif cardNumber == 1
+        cardNumStr = "Ace";
+        isAce = true;
+    else
+        cardNumStr = string(cardNumber);
+    end
+
+        if cardFaction == 1
+            fprintf('   %s of clubs \n', cardNumStr);
+            totalCardVal = totalCardVal + cardVals(cardNumber);
+            cardw= cardNumber;
+            cardsh=1;
+        elseif cardFaction == 2
+            fprintf('   %s of diamonds \n', cardNumStr);
+            totalCardVal = totalCardVal + cardVals(cardNumber);
+            cardw= cardNumber;
+            cardsh =2;
+        elseif cardFaction ==3
+            fprintf('   %s of hearts \n', cardNumStr);
+            totalCardVal = totalCardVal + cardVals(cardNumber);
+            cardw= cardNumber;
+            cardsh =3;
+        else
+            fprintf('   %s of spades \n', cardNumStr);
+            totalCardVal = totalCardVal + cardVals(cardNumber);
+            cardw= cardNumber;
+            cardsh=4;
+        end
+    end
+
+end
+
+
+
+
+    
+
